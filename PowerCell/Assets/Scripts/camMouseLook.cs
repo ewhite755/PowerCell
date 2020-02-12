@@ -4,31 +4,26 @@ using UnityEngine;
 
 public class camMouseLook : MonoBehaviour
 {
-    Vector2 mouseLook;
-    Vector2 smoothV;
-    public float sensitivity = 5.0f;
-    public float smoothing = 2.0f;
+    public Vector2 mouseLook;
+    public Vector2 smoothV;
+    public float sensitivity;
+    public float smoothing;
 
-    GameObject Character;
-
-    // Start is called before the first frame update
+    public GameObject character;
     void Start()
     {
-        Character = this.transform.parent.gameObject;
+        Cursor.lockState = CursorLockMode.Locked;
+        character = transform.parent.gameObject;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-
-        md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
-        smoothV.x = Mathf.Lerp(smoothV.x, md.x, 1f / smoothing);
-        smoothV.x = Mathf.Lerp(smoothV.y, md.y, 1f / smoothing);
+        Vector2 vct2 = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        smoothV.x = Mathf.Lerp(smoothV.x, vct2.x, 1 / smoothing);
+        smoothV.y = Mathf.Lerp(smoothV.y, vct2.y, 1 / smoothing);
         mouseLook += smoothV;
         mouseLook.y = Mathf.Clamp(mouseLook.y, -90f, 90f);
-
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
-        Character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, Character.transform.up);
+        character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
     }
 }
