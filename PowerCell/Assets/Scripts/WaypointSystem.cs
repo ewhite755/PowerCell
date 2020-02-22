@@ -9,6 +9,8 @@ public class WaypointSystem : MonoBehaviour
     private WaypointInfo currentWayPoint;
     private int currentWayPointIndex;
     private NavMeshAgent Robot2;
+    private int destPoint = 0;
+    public Transform[] points;
 
     public GameObject Player;
 
@@ -18,21 +20,24 @@ public class WaypointSystem : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        myTransform = transform; //assign the reference of Transform
-        if (wayPoints.Length > 0)
-        {
-            currentWayPoint = wayPoints[0];//set initial waypoint
-            currentWayPointIndex = 0;
-        }
-        else
-        {
-            Debug.LogError("No waypoint assigned");
-        }
+        //myTransform = transform; //assign the reference of Transform
+        //if (wayPoints.Length > 0)
+        //{
+        //    currentWayPoint = wayPoints[0];//set initial waypoint
+        //    currentWayPointIndex = 0;
+        //}
+        //else
+        //{
+        //    Debug.LogError("No waypoint assigned");
+        //}
     }
 
     void Start()
     {
         Robot2 = GetComponent<NavMeshAgent>();
+        
+
+        GotoNextPoint();
     }
 
     // Update is called once per frame
@@ -40,7 +45,7 @@ public class WaypointSystem : MonoBehaviour
     {
         //Turning the object to the target
         //myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
-        //                                                                                                                                                                    //Moving the object forwards
+        //                                                                                                                                                                  //Moving the object forwards
         //myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
         float distance = Vector3.Distance(transform.position, Player.transform.position);
 
@@ -54,29 +59,46 @@ public class WaypointSystem : MonoBehaviour
 
             Robot2.SetDestination(newPos);
         }
-        else if (currentWayPoint.IsWaypointReached(myTransform.position))
-        {
-            myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
-                                                                                                                                                                                //Moving the object forwards
-            myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
-            NextWaypoint();
-        }
+        else if (!Robot2.pathPending && Robot2.remainingDistance < 0.5f)
+            GotoNextPoint();
+        //else if (currentWayPoint.IsWaypointReached(myTransform.position))
+        //{
+        //    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
+        //                                                                                                                                                                        //Moving the object forwards
+        //    myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+        //    NextWaypoint();
+        //}
 
     }
 
     /// <summary>
     /// Assign Next waypoint in the list.
     /// </summary>
-    public void NextWaypoint()
-    {
-        currentWayPointIndex++; 
-        if (currentWayPointIndex > wayPoints.Length - 1)
-        {
-            currentWayPointIndex = 0; // if index is larger than list of waypoints, reset it to zero
-        }
+    //public void NextWaypoint()
+    //{
+    //    currentWayPointIndex++; 
+    //    if (currentWayPointIndex > wayPoints.Length - 1)
+    //    {
+    //        currentWayPointIndex = 0; // if index is larger than list of waypoints, reset it to zero
+    //    }
 
-        currentWayPoint = wayPoints[currentWayPointIndex]; // assign current waypoint from the list
+    //    currentWayPoint = wayPoints[currentWayPointIndex]; // assign current waypoint from the list
+    //}
+
+    void GotoNextPoint()
+    {
+        // Returns if no points have been set up
+        if (points.Length == 0)
+            return;
+
+        // Set the agent to go to the currently selected destination.
+        Robot2.destination = points[destPoint].position;
+
+        // Choose the next point in the array as the destination,
+        // cycling to the start if necessary.
+        destPoint = (destPoint + 1) % points.Length;
     }
+
     private void OnDrawGizmosSelected()
     {
         for (int i = 0; i < wayPoints.Length; i++)
