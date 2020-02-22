@@ -5,9 +5,6 @@ public class WaypointSystem : MonoBehaviour
 {
     public float moveSpeed = 5;
     public float turnSpeed = 5;
-    public WaypointInfo[] wayPoints;
-    private WaypointInfo currentWayPoint;
-    private int currentWayPointIndex;
     private NavMeshAgent Robot2;
     private int destPoint = 0;
     public Transform[] points;
@@ -15,22 +12,6 @@ public class WaypointSystem : MonoBehaviour
     public GameObject Player;
 
     public float RobotDistanceRun = 4.0f;
-
-    private Transform myTransform;
-    // Use this for initialization
-    void Awake()
-    {
-        //myTransform = transform; //assign the reference of Transform
-        //if (wayPoints.Length > 0)
-        //{
-        //    currentWayPoint = wayPoints[0];//set initial waypoint
-        //    currentWayPointIndex = 0;
-        //}
-        //else
-        //{
-        //    Debug.LogError("No waypoint assigned");
-        //}
-    }
 
     void Start()
     {
@@ -40,13 +21,10 @@ public class WaypointSystem : MonoBehaviour
         GotoNextPoint();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        //Turning the object to the target
-        //myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
-        //                                                                                                                                                                  //Moving the object forwards
-        //myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+
         float distance = Vector3.Distance(transform.position, Player.transform.position);
 
 
@@ -61,29 +39,8 @@ public class WaypointSystem : MonoBehaviour
         }
         else if (!Robot2.pathPending && Robot2.remainingDistance < 0.5f)
             GotoNextPoint();
-        //else if (currentWayPoint.IsWaypointReached(myTransform.position))
-        //{
-        //    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
-        //                                                                                                                                                                        //Moving the object forwards
-        //    myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
-        //    NextWaypoint();
-        //}
 
     }
-
-    /// <summary>
-    /// Assign Next waypoint in the list.
-    /// </summary>
-    //public void NextWaypoint()
-    //{
-    //    currentWayPointIndex++; 
-    //    if (currentWayPointIndex > wayPoints.Length - 1)
-    //    {
-    //        currentWayPointIndex = 0; // if index is larger than list of waypoints, reset it to zero
-    //    }
-
-    //    currentWayPoint = wayPoints[currentWayPointIndex]; // assign current waypoint from the list
-    //}
 
     void GotoNextPoint()
     {
@@ -97,42 +54,5 @@ public class WaypointSystem : MonoBehaviour
         // Choose the next point in the array as the destination,
         // cycling to the start if necessary.
         destPoint = (destPoint + 1) % points.Length;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        for (int i = 0; i < wayPoints.Length; i++)
-        {
-            if (i == 0)
-            {
-                Gizmos.color = new Color(0, 0.4f, 0);
-            }
-            else
-            {
-                Gizmos.color = new Color(0.6f, 1, 0.6f);
-            }
-            Gizmos.DrawCube(wayPoints[i].wayPoint, new Vector3(0.3f, 1, 0.3f));
-
-            if (wayPoints.Length > 1)
-            {
-                Gizmos.color = Color.blue;
-                if (i == 0)
-                {
-                    Gizmos.DrawLine(wayPoints[0].wayPoint, wayPoints[1].wayPoint);
-
-                }
-                else if (i == wayPoints.Length - 1)
-                {
-                    Gizmos.DrawLine(wayPoints[i - 1].wayPoint, wayPoints[i].wayPoint);
-                    Gizmos.color = Color.grey;
-                    Gizmos.DrawLine(wayPoints[wayPoints.Length - 1].wayPoint, wayPoints[0].wayPoint);
-                }
-                else
-                {
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawLine(wayPoints[i - 1].wayPoint, wayPoints[i].wayPoint);
-                }
-            }
-        }
     }
 }
