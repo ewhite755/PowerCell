@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 public class WaypointSystem : MonoBehaviour
 {
@@ -7,6 +8,11 @@ public class WaypointSystem : MonoBehaviour
     public WaypointInfo[] wayPoints;
     private WaypointInfo currentWayPoint;
     private int currentWayPointIndex;
+    private NavMeshAgent Robot2;
+
+    public GameObject Player;
+
+    public float RobotDistanceRun = 4.0f;
 
     private Transform myTransform;
     // Use this for initialization
@@ -24,15 +30,35 @@ public class WaypointSystem : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        Robot2 = GetComponent<NavMeshAgent>();
+    }
+
     // Update is called once per frame
     void Update()
     {
         //Turning the object to the target
-        myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
-                                                                                                                                                                            //Moving the object forwards
-        myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
-        if (currentWayPoint.IsWaypointReached(myTransform.position))
+        //myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
+        //                                                                                                                                                                    //Moving the object forwards
+        //myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+        float distance = Vector3.Distance(transform.position, Player.transform.position);
+
+
+        if (distance < RobotDistanceRun)
         {
+
+            Vector3 dirToPlayer = transform.position - Player.transform.position;
+
+            Vector3 newPos = transform.position - dirToPlayer;
+
+            Robot2.SetDestination(newPos);
+        }
+        else if (currentWayPoint.IsWaypointReached(myTransform.position))
+        {
+            myTransform.rotation = Quaternion.Lerp(myTransform.rotation, Quaternion.LookRotation(currentWayPoint.wayPoint - myTransform.position), Time.deltaTime * turnSpeed); // Smooth turning
+                                                                                                                                                                                //Moving the object forwards
+            myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
             NextWaypoint();
         }
 
@@ -41,9 +67,9 @@ public class WaypointSystem : MonoBehaviour
     /// <summary>
     /// Assign Next waypoint in the list.
     /// </summary>
-    private void NextWaypoint()
+    public void NextWaypoint()
     {
-        currentWayPointIndex++; // try to increase the index
+        currentWayPointIndex++; 
         if (currentWayPointIndex > wayPoints.Length - 1)
         {
             currentWayPointIndex = 0; // if index is larger than list of waypoints, reset it to zero
