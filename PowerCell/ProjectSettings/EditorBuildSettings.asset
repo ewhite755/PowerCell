@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PowerCell.unity
     guid: f4680b0a288f67e45942bbf1249b830e
+  - enabled: 1
+    path: Assets/Scenes/Game Over.unity
+    guid: e71aa798070be614186eaf9f39ff8181
+  - enabled: 1
+    path: Assets/Scenes/Win.unity
+    guid: f4cab11792f85b54ca56410fec1335f1
   m_configObjects: {}
