@@ -13,6 +13,7 @@ public class camMouseLook : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         character = transform.parent.gameObject;
     }
 

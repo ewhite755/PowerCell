@@ -40,6 +40,11 @@ public class CharacterController : MonoBehaviour
         if (Input.GetKeyDown("escape"))
             Cursor.lockState = CursorLockMode.None;
 
+        if (Input.GetKey("escape"))
+        {
+            Application.Quit();
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
 
